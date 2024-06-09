@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Music Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #musicList {
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>GitHub Music Player</h1>
+    <audio id="player" controls>
+        <source id="source" src="" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <select id="musicList"></select>
+    <button onclick="playMusic()">Play Music</button>
+
+    <script>
+        async function fetchMusicList() {
+            const owner = 'Pacuka';
+            const repo = 'Music';
+            const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/Music`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const data = await response.json();
+                const musicList = document.getElementById('musicList');
+
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.name;
+                    option.textContent = item.name.replace('.mp3', ''); // Remove the file extension
+                    musicList.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+
+        async function playMusic() {
+            const owner = 'Pacuka';
+            const repo = 'Music';
+            const selectedSong = document.getElementById('musicList').value;
+            const url = `https://raw.githubusercontent.com/${owner}/${repo}/main/Music/${selectedSong}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const blob = await response.blob();
+                const urlObject = URL.createObjectURL(blob);
+
+                const source = document.getElementById('source');
+                const player = document.getElementById('player');
+                source.src = urlObject;
+                player.load();
+                player.play();
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+
+        // Fetch the music list when the page loads
+        window.addEventListener('load', fetchMusicList);
+    </script>
+</body>
+</html>
