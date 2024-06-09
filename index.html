@@ -8,7 +8,7 @@
     <style>
         body {
             background-color: #111;
-            font-family: Arial, sans-serif;
+            font-family: Montserrat, sans-serif;
             color: #fff;
             display: flex;
             justify-content: center;
@@ -43,7 +43,11 @@
             background-color: #0056b3;
         }
 
-        /* Kapcsoló stílus */
+        a{
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
         .switch {
             position: relative;
             display: inline-block;
@@ -85,7 +89,7 @@
         }
 
         input:checked + .slider {
-            background-color: #007bff; /* Kék háttérszín */
+            background-color: #007bff; 
         }
 
         input:focus + .slider {
@@ -97,9 +101,7 @@
             -ms-transform: translateX(26px);
             transform: translateX(26px);
         }
-        /* END Kapcsoló stílus */
         
-        /* Lejátszó stílus */
         #player {
             width: 100%;
             margin-top: 20px;
@@ -111,11 +113,11 @@
             border-radius: 5px;
             margin-top: 20px;
         }
-        /* END Lejátszó stílus */
     </style>
 </head>
 <body>
     <div class="container">
+        <a href="https://pacuka.github.io/Website/">Vissza a főoldalra</a>
         <h1 style="text-align: center;">Pacuka's Web Music Player</h1>
         <audio id="player" controls onended="playNext()">
             <source id="source" src="" type="audio/mp3">
@@ -123,7 +125,6 @@
         </audio>
         <br>
         <select id="musicList" onchange="playMusic()">
-            <!-- Zenék dinamikusan jönnek ide -->
         </select>
         <br>
         <button class="button" onclick="togglePlay()">Play/Stop</button>
@@ -163,7 +164,7 @@
                 data.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item.name;
-                    option.textContent = item.name.replace('.mp3', ''); // Remove the file extension
+                    option.textContent = item.name.replace('.mp3', ''); 
                     musicList.appendChild(option);
                 });
             } catch (error) {
@@ -189,8 +190,8 @@
                 const player = document.getElementById('player');
                 source.src = urlObject;
                 player.load();
-                if (autoplay) { // Ha az autoplay be van kapcsolva
-                    player.play(); // Lejátssza az új zenét azonnal
+                if (autoplay) { 
+                    player.play();
                 }
             } catch (error) {
                 console.error('Fetch error:', error);
@@ -224,8 +225,6 @@
                 player.pause();
             }
         }
-
-        // Kapcsolók kezelése
         const autoplayToggle = document.getElementById('autoplayToggle');
         const sequentialToggle = document.getElementById('sequentialToggle');
 
@@ -237,7 +236,6 @@
             sequential = this.checked;
         });
 
-        // Fetch the music list when the page loads
         window.addEventListener('load', function() {
             fetchMusicList();
         });
