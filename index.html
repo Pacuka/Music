@@ -6,53 +6,145 @@
     <title>GitHub Music Player</title>
     <style>
         body {
+            background-color: #111;
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
             height: 100vh;
-            background-color: #f0f0f0;
+            margin: 0;
         }
 
-        h1 {
-            margin-bottom: 20px;
+        .container {
+            width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background-color: #4CAF50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        #musicList {
-            margin-bottom: 20px;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
+        .button {
             background-color: #007bff;
             color: #fff;
             border: none;
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease;
         }
 
-        button:hover {
+        .button:hover {
             background-color: #0056b3;
         }
+
+        /* Kapcsoló stílus */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin: 5px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #007bff; /* Kék háttérszín */
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+        /* END Kapcsoló stílus */
+        
+        /* Lejátszó stílus */
+        #player {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #musicList {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        /* END Lejátszó stílus */
     </style>
 </head>
 <body>
-    <h1>GitHub Music Player</h1>
-    <audio id="player" controls>
-        <source id="source" src="" type="audio/mp3">
-        Your browser does not support the audio element.
-    </audio>
-    <select id="musicList"></select>
-    <button onclick="playMusic()">Play Music</button>
+    <div class="container">
+        <h1 style="text-align: center;">GitHub Music Player</h1>
+        <audio id="player" controls onended="playNext()">
+            <source id="source" src="" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+        <br>
+        <select id="musicList">
+            <!-- Zenék dinamikusan jönnek ide -->
+        </select>
+        <br>
+        <button class="button" onclick="togglePlay()">Play/Stop</button>
+        <button class="button" onclick="playRandom()">Random Music</button>
+        <br>
+        <label class="switch" for="autoplayToggle">
+            <input type="checkbox" id="autoplayToggle">
+            <span class="slider"></span>
+        </label>
+        <label for="autoplayToggle">Autoplay</label>
+        <br>
+        <label class="switch" for="sequentialToggle">
+            <input type="checkbox" id="sequentialToggle">
+            <span class="slider"></span>
+        </label>
+        <label for="sequentialToggle">Sequential</label>
+    </div>
 
     <script>
+        let autoplay = false;
+        let sequential = false;
+
         async function fetchMusicList() {
             const owner = 'Pacuka';
             const repo = 'Music';
@@ -95,14 +187,58 @@
                 const player = document.getElementById('player');
                 source.src = urlObject;
                 player.load();
-                player.play();
+                if (autoplay) { // Ha az autoplay be van kapcsolva
+                    player.play(); // Lejátssza az új zenét azonnal
+                }
             } catch (error) {
                 console.error('Fetch error:', error);
             }
         }
 
+        async function playRandom() {
+            const musicList = document.getElementById('musicList');
+            const randomIndex = Math.floor(Math.random() * musicList.options.length);
+            musicList.selectedIndex = randomIndex;
+            playMusic();
+        }
+
+        function playNext() {
+            const musicList = document.getElementById('musicList');
+            let nextIndex;
+            if (sequential) {
+                nextIndex = (musicList.selectedIndex + 1) % musicList.options.length;
+            } else {
+                nextIndex = Math.floor(Math.random() * musicList.options.length);
+            }
+            musicList.selectedIndex = nextIndex;
+            playMusic();
+        }
+
+        function togglePlay() {
+                        const player = document.getElementById('player');
+            if (player.paused) {
+                player.play();
+            } else {
+                player.pause();
+            }
+        }
+
+        // Kapcsolók kezelése
+        const autoplayToggle = document.getElementById('autoplayToggle');
+        const sequentialToggle = document.getElementById('sequentialToggle');
+
+        autoplayToggle.addEventListener('change', function() {
+            autoplay = this.checked;
+        });
+
+        sequentialToggle.addEventListener('change', function() {
+            sequential = this.checked;
+        });
+
         // Fetch the music list when the page loads
-        window.addEventListener('load', fetchMusicList);
+        window.addEventListener('load', function() {
+            fetchMusicList();
+        });
     </script>
 </body>
 </html>
