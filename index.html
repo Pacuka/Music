@@ -121,11 +121,12 @@
             Your browser does not support the audio element.
         </audio>
         <br>
-        <select id="musicList">
+        <select id="musicList" onchange="playMusic()">
             <!-- Zenék dinamikusan jönnek ide -->
         </select>
         <br>
         <button class="button" onclick="togglePlay()">Play/Stop</button>
+        <button class="button" onclick="playNext()">Next Track</button>
         <button class="button" onclick="playRandom()">Random Music</button>
         <br>
         <label class="switch" for="autoplayToggle">
@@ -199,7 +200,7 @@
             const musicList = document.getElementById('musicList');
             const randomIndex = Math.floor(Math.random() * musicList.options.length);
             musicList.selectedIndex = randomIndex;
-            playMusic();
+                        playMusic();
         }
 
         function playNext() {
@@ -215,7 +216,7 @@
         }
 
         function togglePlay() {
-                        const player = document.getElementById('player');
+            const player = document.getElementById('player');
             if (player.paused) {
                 player.play();
             } else {
