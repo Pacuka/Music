@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pacuka's Web Music Player</title>
     <link rel="icon" href="https://minecraft.wiki/images/Music_Disc_otherside_JE1_BE1.png?980f0" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: #111;
-            font-family: Montserrat, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             color: #fff;
             display: flex;
             justify-content: center;
@@ -18,6 +19,7 @@
         }
 
         .container {
+            max-width: 90%;
             width: 400px;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -26,6 +28,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
         }
 
         .button {
@@ -36,24 +39,41 @@
             border-radius: 5px;
             cursor: pointer;
             margin: 5px;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .button:hover {
             background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        
+        a:hover {
+            transform: scale(1.5);
+            text-decoration: underline;
         }
 
-        a{
+        a {
             text-decoration: none;
             color: white;
             font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
         }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
         .switch {
             position: relative;
             display: inline-block;
             width: 60px;
             height: 34px;
-            margin: 5px;
+            margin-left: 10px;
         }
 
         .switch input {
@@ -70,7 +90,6 @@
             right: 0;
             bottom: 0;
             background-color: #ccc;
-            -webkit-transition: .4s;
             transition: .4s;
             border-radius: 34px;
         }
@@ -83,7 +102,6 @@
             left: 4px;
             bottom: 4px;
             background-color: white;
-            -webkit-transition: .4s;
             transition: .4s;
             border-radius: 50%;
         }
@@ -97,14 +115,42 @@
         }
 
         input:checked + .slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
             transform: translateX(26px);
         }
         
         #player {
             width: 100%;
             margin-top: 20px;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #player::-webkit-media-controls-panel {
+            background-color: #333;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        #player::-webkit-media-controls-play-button,
+        #player::-webkit-media-controls-pause-button,
+        #player::-webkit-media-controls-volume-slider {
+            color: #007bff;
+        }
+
+        #player::-webkit-media-controls-current-time-display,
+        #player::-webkit-media-controls-time-remaining-display {
+            color: #fff;
+        }
+
+        #player::-webkit-media-controls-seek-back-button,
+        #player::-webkit-media-controls-seek-forward-button {
+            color: #007bff;
+        }
+
+        #player::-webkit-media-controls-mute-button,
+        #player::-webkit-media-controls-volume-slider {
+            color: #fff;
         }
 
         #musicList {
@@ -112,36 +158,52 @@
             padding: 10px;
             border-radius: 5px;
             margin-top: 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #musicList option {
+            background-color: #333;
+            color: #fff;
+        }
+
+        #musicList option:hover {
+            background-color: #555;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="https://pacuka.github.io/Website/">Vissza a főoldalra</a>
-        <h1 style="text-align: center;">Pacuka's Web Music Player</h1>
+        <h1>Pacuka's Web Music Player</h1>
         <audio id="player" controls onended="playNext()">
             <source id="source" src="" type="audio/mp3">
             Your browser does not support the audio element.
         </audio>
-        <br>
         <select id="musicList" onchange="playMusic()">
         </select>
-        <br>
-        <button class="button" onclick="togglePlay()">Play/Stop</button>
-        <button class="button" onclick="playNext()">Next Track</button>
-        <button class="button" onclick="playRandom()">Random Music</button>
-        <br>
-        <label class="switch" for="autoplayToggle">
-            <input type="checkbox" id="autoplayToggle">
-            <span class="slider"></span>
-        </label>
-        <label for="autoplayToggle">Autoplay</label>
-        <br>
-        <label class="switch" for="sequentialToggle">
-            <input type="checkbox" id="sequentialToggle">
-            <span class="slider"></span>
-        </label>
-        <label for="sequentialToggle">Sequential</label>
+        <div class="controls">
+            <button class="button" onclick="togglePlay()">Play/Stop</button>
+            <button class="button" onclick="playNext()">Next Track</button>
+            <button class="button" onclick="playRandom()">Random Music</button>
+        </div>
+        <div class="switch-container">
+            <label for="autoplayToggle">Autoplay</label>
+            <label class="switch" for="autoplayToggle">
+                <input type="checkbox" id="autoplayToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="switch-container">
+            <label for="sequentialToggle">Sequential</label>
+            <label class="switch" for="sequentialToggle">
+                <input type="checkbox" id="sequentialToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
     </div>
 
     <script>
@@ -202,7 +264,7 @@
             const musicList = document.getElementById('musicList');
             const randomIndex = Math.floor(Math.random() * musicList.options.length);
             musicList.selectedIndex = randomIndex;
-                        playMusic();
+            playMusic();
         }
 
         function playNext() {
@@ -225,6 +287,7 @@
                 player.pause();
             }
         }
+
         const autoplayToggle = document.getElementById('autoplayToggle');
         const sequentialToggle = document.getElementById('sequentialToggle');
 
